@@ -4,6 +4,7 @@ import re
 
 # Added some filtering but needs alot more work
 
+
 def load_project_data(filepath):
     with open(filepath, 'r') as file:
         return json.load(file)
@@ -16,15 +17,12 @@ def parse_file_details(file_path):
         'filepath': file_path.split(os.sep),
         'isobsolete': 'OBSOLETE' in filename.upper()
     }
-
     rev_match = re.search(r'rev[ _]*(\d+)', filename, re.IGNORECASE)
     if rev_match:
         details['rev'] = rev_match.group(1)
-
     date_match = re.search(r'(\d{4})(\d{2})(\d{2})', filename)
     if date_match:
         details['date'] = f"{date_match.group(1)}-{date_match.group(2)}-{date_match.group(3)}"
-
     return details
 
 def add_to_project_data(project_data, category, file_details, root):
@@ -34,30 +32,26 @@ def add_to_project_data(project_data, category, file_details, root):
         'plc_project': 'plcprojectfiles',
         'plc_archive': 'plcprojectarchives'
     }
-
     if 'INSTALLATION' in root.upper():
-        category = 'installationinformation'
+        category = 'installations'
         project_data[category] = {
             'installationinformationfullpath': file_details['filefullpath'],
             'installationinformationpath': file_details['filepath'],
             'filename': file_details['filename']
         }
     else:
-        category_key = key_map.get(category, category)
-        if category_key not in project_data:
-            project_data[category_key] = []
-
         if category in key_map:
             specific_details = {
-                f"{category_key[:-1]}fullpath": file_details['filefullpath'],  # Removes the 's' from files
+                f"{category[:-1]}fullpath": file_details['filefullpath'],
+                f"{category[:-1]}path": file_details['filepath'],
                 "filename": file_details['filename'],
                 "isobsolete": file_details['isobsolete'],
                 "date": file_details.get('date', ''),
                 "rev": file_details.get('rev', '')
             }
-            project_data[category_key].append(specific_details)
+            project_data.setdefault(key_map[category], []).append(specific_details)
         else:
-            project_data[category].append(file_details)
+            project_data.setdefault(category, []).append(file_details)
 
 def check_directory_contents(project_details, expected_items):
     results = {}
@@ -66,11 +60,12 @@ def check_directory_contents(project_details, expected_items):
     for project, details in project_details.items():
         project_path = details.get('projectfullpath', '')
         electrical_path = os.path.join(project_path, 'ELECTRICAL')
-
         if not os.path.exists(electrical_path):
-            continue  # Skip if no ELECTRICAL directory
+            errors[project] = "No ELECTRICAL directory"
+            continue
 
         project_data = {}
+        found_categories = set()
 
         for root, dirs, files in os.walk(electrical_path):
             for file in files:
@@ -78,9 +73,13 @@ def check_directory_contents(project_details, expected_items):
                 for item, extensions in expected_items.items():
                     if file.endswith(tuple(extensions)):
                         add_to_project_data(project_data, item, file_details, root)
+                        found_categories.add(item)
 
-        final_project_data = {k: v for k, v in project_data.items() if v}
-        results[project] = final_project_data
+        missing_categories = set(expected_items.keys()) - found_categories
+        if missing_categories:
+            errors[project] = f"Missing categories: {', '.join(missing_categories)}"
+
+        results[project] = {k: v for k, v in project_data.items() if v}
 
     return results, errors
 
