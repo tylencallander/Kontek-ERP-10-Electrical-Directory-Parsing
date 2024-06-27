@@ -1,15 +1,63 @@
 import json
 import os
+import re
+
+# Added some filtering but needs alot more work
 
 def load_project_data(filepath):
-    try:
-        with open(filepath, 'r') as file:
-            data = json.load(file)
-        print(f"Loaded project data from {filepath}")
-        return data
-    except Exception as e:
-        print(f"Failed to load project data: {e}")
-        return {}
+    with open(filepath, 'r') as file:
+        return json.load(file)
+
+def parse_file_details(file_path):
+    filename = os.path.basename(file_path)
+    details = {
+        'filename': filename,
+        'filefullpath': file_path,
+        'filepath': file_path.split(os.sep),
+        'isobsolete': 'OBSOLETE' in filename.upper()
+    }
+
+    rev_match = re.search(r'rev[ _]*(\d+)', filename, re.IGNORECASE)
+    if rev_match:
+        details['rev'] = rev_match.group(1)
+
+    date_match = re.search(r'(\d{4})(\d{2})(\d{2})', filename)
+    if date_match:
+        details['date'] = f"{date_match.group(1)}-{date_match.group(2)}-{date_match.group(3)}"
+
+    return details
+
+def add_to_project_data(project_data, category, file_details, root):
+    key_map = {
+        'hmi_project': 'hmiprojectfiles',
+        'hmi_archive': 'hmiarchivefiles',
+        'plc_project': 'plcprojectfiles',
+        'plc_archive': 'plcprojectarchives'
+    }
+
+    if 'INSTALLATION' in root.upper():
+        category = 'installationinformation'
+        project_data[category] = {
+            'installationinformationfullpath': file_details['filefullpath'],
+            'installationinformationpath': file_details['filepath'],
+            'filename': file_details['filename']
+        }
+    else:
+        category_key = key_map.get(category, category)
+        if category_key not in project_data:
+            project_data[category_key] = []
+
+        if category in key_map:
+            specific_details = {
+                f"{category_key[:-1]}fullpath": file_details['filefullpath'],  # Removes the 's' from files
+                "filename": file_details['filename'],
+                "isobsolete": file_details['isobsolete'],
+                "date": file_details.get('date', ''),
+                "rev": file_details.get('rev', '')
+            }
+            project_data[category_key].append(specific_details)
+        else:
+            project_data[category].append(file_details)
 
 def check_directory_contents(project_details, expected_items):
     results = {}
@@ -18,35 +66,21 @@ def check_directory_contents(project_details, expected_items):
     for project, details in project_details.items():
         project_path = details.get('projectfullpath', '')
         electrical_path = os.path.join(project_path, 'ELECTRICAL')
-        print(f"Checking contents for project {project} at {electrical_path}")
 
         if not os.path.exists(electrical_path):
-            print(f"No ELECTRICAL directory for {project}, skipping...")
-            continue
+            continue  # Skip if no ELECTRICAL directory
 
-        found_files = {}
-        project_errors = []
+        project_data = {}
 
         for root, dirs, files in os.walk(electrical_path):
             for file in files:
-                for item in expected_items:
-                    if file.endswith(tuple(expected_items[item])):
-                        if item not in found_files:
-                            found_files[item] = []
-                        found_files[item].append({
-                            'filename': file,
-                            'filefullpath': os.path.join(root, file),
-                            'filepath': os.path.join(root, file).split(os.sep)
-                        })
+                file_details = parse_file_details(os.path.join(root, file))
+                for item, extensions in expected_items.items():
+                    if file.endswith(tuple(extensions)):
+                        add_to_project_data(project_data, item, file_details, root)
 
-        for item, extensions in expected_items.items():
-            if item not in found_files:
-                project_errors.append(f"{item} missing")
-
-        results[project] = found_files
-        if project_errors:
-            errors[project] = project_errors
-            print(f"Errors found for project {project}: {project_errors}")
+        final_project_data = {k: v for k, v in project_data.items() if v}
+        results[project] = final_project_data
 
     return results, errors
 
