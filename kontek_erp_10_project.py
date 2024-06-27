@@ -2,8 +2,14 @@ import json
 import os
 
 def load_project_data(filepath):
-    with open(filepath, 'r') as file:
-        return json.load(file)
+    try:
+        with open(filepath, 'r') as file:
+            data = json.load(file)
+        print(f"Loaded project data from {filepath}")
+        return data
+    except Exception as e:
+        print(f"Failed to load project data: {e}")
+        return {}
 
 def check_directory_contents(project_details, expected_items):
     results = {}
@@ -12,9 +18,11 @@ def check_directory_contents(project_details, expected_items):
     for project, details in project_details.items():
         project_path = details.get('projectfullpath', '')
         electrical_path = os.path.join(project_path, 'ELECTRICAL')
+        print(f"Checking contents for project {project} at {electrical_path}")
 
         if not os.path.exists(electrical_path):
-            continue 
+            print(f"No ELECTRICAL directory for {project}, skipping...")
+            continue
 
         found_files = {}
         project_errors = []
@@ -38,6 +46,7 @@ def check_directory_contents(project_details, expected_items):
         results[project] = found_files
         if project_errors:
             errors[project] = project_errors
+            print(f"Errors found for project {project}: {project_errors}")
 
     return results, errors
 
@@ -56,13 +65,17 @@ def main():
         'plc_hmi_archive': ['zap13', 'zap14', 'zap15', 'zap16', 'zap18']
     }
 
+    print("Starting the checking of directory contents...")
     project_contents, project_errors = check_directory_contents(projects_details, expected_items)
+    print("All projects processed.")
 
     with open('dir_details_elec.json', 'w') as f:
         json.dump(project_contents, f, indent=4)
+        print("Directory details saved to dir_details_elec.json.")
     
     with open('errors.json', 'w') as f:
         json.dump(project_errors, f, indent=4)
+        print("Errors saved to errors.json.")
 
     print("Processing complete. Check dir_details_elec.json and errors.json for output.")
 
