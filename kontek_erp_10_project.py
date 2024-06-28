@@ -10,7 +10,7 @@ import re
 # - isobsolete, rev, date
 # - installations, installationinformationfullpath, installationinformationpath
 
-#   To do list...
+#   To do list (Almost all pdf/image stuff)...
 
 # - combinedbom (Optional I think)
 # - numberdrawingsets, drawingsets, pdfsfoldername, drawingname, numberrevisions
