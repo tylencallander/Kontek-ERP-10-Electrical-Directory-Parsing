@@ -2,7 +2,6 @@ import json
 import os
 import re
 
-# Added some filtering but needs alot more work
 
 
 def load_project_data(filepath):
