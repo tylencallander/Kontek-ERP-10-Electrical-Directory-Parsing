@@ -2,7 +2,13 @@ import json
 import os
 import re
 
+#   So far includes...
 
+# - hmi_project, hmiprojectfiles, hmi_archive, hmiarchivefiles
+# - plc_project, plcprojectfiles, plc_archive, plcarchivefiles
+# - filename, filefullpath, filepath
+# - isobsolete, rev, date
+# - installations, installationinformationfullpath, installationinformationpath
 
 def load_project_data(filepath):
     with open(filepath, 'r') as file:
@@ -29,7 +35,7 @@ def add_to_project_data(project_data, category, file_details, root):
         'hmi_project': 'hmiprojectfiles',
         'hmi_archive': 'hmiarchivefiles',
         'plc_project': 'plcprojectfiles',
-        'plc_archive': 'plcprojectarchives'
+        'plc_archive': 'plcarchivefiles'
     }
     if 'INSTALLATION' in root.upper():
         category = 'installations'
