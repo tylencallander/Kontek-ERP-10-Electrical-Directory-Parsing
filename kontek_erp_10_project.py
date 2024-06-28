@@ -15,6 +15,7 @@ import re
 # - combinedbom (Optional I think)
 # - numberdrawingsets, drawingsets, pdfsfoldername, drawingname, numberrevisions
 # - pdfdirectoryfullpath, pdfdirectorypath, pdffilefullpath, pdffilepath
+# - Add more filtering to errors.json output.
 
 
 def load_project_data(filepath):
