@@ -10,6 +10,13 @@ import re
 # - isobsolete, rev, date
 # - installations, installationinformationfullpath, installationinformationpath
 
+#  To do...
+
+# - combinedbom (Optional I think)
+# - numberdrawingsets, drawingsets, pdfsfoldername, drawingname, numberrevisions
+# - pdfdirectoryfullpath, pdfdirectorypath, pdffilefullpath, pdffilepath
+
+
 def load_project_data(filepath):
     with open(filepath, 'r') as file:
         return json.load(file)
