@@ -2,7 +2,7 @@ import json
 import os
 import re
 
-#   So far includes...
+#   So far includes..
 
 # - hmi_project, hmiprojectfiles, hmi_archive, hmiarchivefiles
 # - plc_project, plcprojectfiles, plc_archive, plcarchivefiles
