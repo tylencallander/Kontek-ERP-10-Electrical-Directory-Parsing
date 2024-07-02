@@ -12,7 +12,6 @@ import re
 
 #   To do list (Almost all pdf/image stuff)...
 
-# - combinedbom (Optional I think)
 # - numberdrawingsets, drawingsets, pdfsfoldername, drawingname, numberrevisions
 # - pdfdirectoryfullpath, pdfdirectorypath, pdffilefullpath, pdffilepath
 # - Add more filtering to errors.json output.
@@ -101,7 +100,7 @@ def main():
     projects_details = load_project_data(projects_data_path)
 
     expected_items = {
-        'boms': ['xlsx', 'xls'],
+        'combinedboms': ['xlsx', 'xls'],
         'schematics': ['pdf', 'dwg'],
         'hmi_project': ['mer', 'ap13', 'ap14', 'ap15', 'ap16', 'ap18', 'ccwsln'],
         'hmi_archive': ['apa', 'zap13', 'zap14', 'zap15', 'zap16', 'zap18'],
