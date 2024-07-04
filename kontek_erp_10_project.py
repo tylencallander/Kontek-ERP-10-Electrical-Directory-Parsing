@@ -7,14 +7,13 @@ import re
 # - hmi_project, hmiprojectfiles, hmi_archive, hmiarchivefiles
 # - plc_project, plcprojectfiles, plc_archive, plcarchivefiles
 # - filename, filefullpath, filepath
-# - isobsolete, rev, date
+# - combinedbom, isobsolete, rev, date
 # - installations, installationinformationfullpath, installationinformationpath
 
 #   To do list (Almost all pdf/image stuff)...
 
 # - numberdrawingsets, drawingsets, pdfsfoldername, drawingname, numberrevisions
 # - pdfdirectoryfullpath, pdfdirectorypath, pdffilefullpath, pdffilepath
-# - Add more filtering to errors.json output.
 
 
 def load_project_data(filepath):
