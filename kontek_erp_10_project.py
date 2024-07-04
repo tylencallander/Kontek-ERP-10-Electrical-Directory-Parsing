@@ -1,7 +1,3 @@
-import json
-import os
-import re
-
 #   So far includes...
 
 # - hmi_project, hmiprojectfiles, hmi_archive, hmiarchivefiles
@@ -15,6 +11,9 @@ import re
 # - numberdrawingsets, drawingsets, pdfsfoldername, drawingname, numberrevisions
 # - pdfdirectoryfullpath, pdfdirectorypath, pdffilefullpath, pdffilepath
 
+import json
+import os
+import re
 
 def load_project_data(filepath):
     with open(filepath, 'r') as file:
