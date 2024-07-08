@@ -8,8 +8,8 @@
 
 #   To do list (Almost all pdf/image stuff)...
 
-# - numberdrawingsets, drawingsets, pdfsfoldername, drawingname, numberrevisions
-# - pdfdirectoryfullpath, pdfdirectorypath, pdffilefullpath, pdffilepath
+# - numberdrawingsets, drawingsets, drawingname, numberrevisions
+# - pdfdirectoryfullpath, pdfdirectorypath, pdffilefullpath, pdffilepath, pdfsfoldername
 
 import json
 import os
