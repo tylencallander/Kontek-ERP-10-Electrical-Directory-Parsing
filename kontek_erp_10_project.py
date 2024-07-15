@@ -61,7 +61,7 @@ def check_directory_contents(project_details, expected_items):
 
     for project, details in project_details.items():
         base_path = details['projectfullpath']
-        project_number = project.split()[0]  # Assuming project number is the first part of the project identifier
+        project_number = project.split()[0] 
         customer_path = os.path.dirname(base_path)
         
         # Find directories with potential suffixes
