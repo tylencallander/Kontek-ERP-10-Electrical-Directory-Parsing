@@ -64,7 +64,6 @@ def check_directory_contents(project_details, expected_items):
         project_number = project.split()[0] 
         customer_path = os.path.dirname(base_path)
         
-        # Find directories with potential suffixes
         potential_paths = [d for d in os.listdir(customer_path) if re.match(f"{project_number}(-.+)?", d)]
         
         for path in potential_paths:
